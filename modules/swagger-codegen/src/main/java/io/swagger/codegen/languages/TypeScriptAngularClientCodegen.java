@@ -311,7 +311,10 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
             }
 
             // Overwrite path to TypeScript template string, after applying everything we just did.
-            op.path = pathBuffer.toString();
+            // TODO  去掉v1
+            op.path = pathBuffer.toString().replace("v1/","");
+            // 修改重复名字问题
+            op.nickname = getNickName(op);
         }
 
         // Add additional filename information for model imports in the services
@@ -322,6 +325,20 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         }
 
         return operations;
+    }
+
+    /**
+     * 最后一位是数字要把数字截断
+     * @param op
+     * @return
+     */
+    private String getNickName(CodegenOperation op){
+        char lastChar = op.nickname.charAt(op.nickname.length() - 1);
+        if(lastChar >= '0' && lastChar <= '9'){
+            return op.nickname.substring(0,op.nickname.length() - 1);
+        }else{
+            return op.nickname;
+        }
     }
 
     /**
